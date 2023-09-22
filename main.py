@@ -1,6 +1,8 @@
+from os import wait
 import shutil
 import string
 import sys
+import time
 
 from database_helper import *
 
@@ -9,10 +11,23 @@ from database_helper import *
 LOGIN_NUM_LIMIT = 1000000000
 # END OF ADDITIONAL CODE
 USER_NUM_LIMIT = 5
+
+
+
 FEATURES = {
     "a": "Search for a job",
     "b": "Find someone you know",
     "c": "Learn a new skill",
+}
+
+JOB_OPTIONS = {
+    "a": "Post a job",
+    "b": "Go back",
+}
+
+FRIEND_OPTIONS = {
+    "a": "Find by first and last name",
+    "b": "Go back",
 }
 SKILLS = ["Python", "Java", "C++", "JavaScript", "SQL"]
 
@@ -24,13 +39,27 @@ login_attempts = 0
 # END OF ADDITIONAL CODE
 
 
+def prompt_person_search(username):
+    """Ask user if they want to search for someone before logging in"""
+    decision = input("Before logging in, Do you want to look for someone (Y / N)? ").strip().upper()
+  
+    if decision == "Y":
+        name_search(username)
+    elif decision == "N":
+        return False
+    else:
+        print("Invalid input, please try again")
+        prompt_person_search()
+
 def login():
     """Get username and password from user and check if they match a user in the database"""
+
     username = input("Enter your username: ").strip()
     password = input("Enter your password: ").strip()
 
     if check_login(username, password):
         print("You have successfully logged in")
+        prompt_person_search(username)
         return username
     else:
         print("Incorrect username / password, please try again")
@@ -66,15 +95,26 @@ def signup():
     while password is None:
         password_in = input("Enter your password: ").strip()
         password = validate_password(password_in)
+
+    firstname = input("Please insert your first name: ")
+
+    lastname = input("Please insert your last name: ")
     # ADDITIONAL CODE END
 
-    if create_user(username, password):
+    if create_user(username, password,firstname,lastname):
         print("Signup successful!")
         return username
     else:
         print("Username already exists, please try again")
         return signup()
 
+
+# ADDITIONAL CODE
+def check_five_jobs(num_jobs):
+    if num_jobs == USER_NUM_LIMIT:
+        print("All permitted jobs have been created, please come back later")
+        return 1
+    return 2
 
 # ADDITIONAL CODE
 def check_five_users(num_users):
@@ -127,21 +167,83 @@ def feature_direct(feature_choice, username):
 
 def job_search(username):
     """Job search page"""
-    draw_line(message=FEATURES["a"])
-    print("under construction")
-    if go_back():
-        feature_choice = choose_features(username)
-        feature_direct(feature_choice, username)
+    draw_line(message="JOB_OPTIONS")
+    print("What would you like to do with jobs?")
+    for key, value in JOB_OPTIONS.items():
+        print(f"{key}. {value}")
+    feature_choice = input(f"Choose one of {list(JOB_OPTIONS.keys())}:").strip().lower()
 
+    if feature_choice == "a":
+        job_posting (username)
+    elif feature_choice == "b":
+      if go_back():
+          feature_choice = choose_features(username)
+          feature_direct(feature_choice, username)
+
+def job_posting (username) :
+
+   # ADDITIONAL CODE
+    db_num_jobs = get_num_of_jobs()
+    num_jobs = check_five_jobs(db_num_jobs)
+    if num_jobs == 1:
+        return None
+
+    """Job posting page"""
+    draw_line(message="JOB_POSTING")
+
+    job_title = input("Please enter the job's title: ")
+
+    job_description = input("Please enter the job's description: ")
+
+    job_employer = input ("Please enter the job's employer: ")
+
+    job_location = input ("Please enter the job's location: ")
+
+    job_salary = input("Please enter the job's salary: ")
+
+    create_job(job_title, job_description, job_employer, job_location, job_salary, get_first_name(username), get_last_name(username))
+
+    print ("\nJob created: Thank You for posting. We hope you'll find great employees!\n")
+  
+      
+    feature_choice = choose_features(username)
+    feature_direct(feature_choice, username)
 
 def friend_search(username):
     """Friend search page"""
-    draw_line(message=FEATURES["b"])
-    print("under construction")
-    if go_back():
-        feature_choice = choose_features(username)
-        feature_direct(feature_choice, username)
+    draw_line(message="FRIEND_SEARCH")
+    print("How would you like to search for friends?")
+    for key, value in FRIEND_OPTIONS.items():
+        print(f"{key}. {value}")
+    feature_choice = input(f"Choose one of {list(FRIEND_OPTIONS.keys())}:").strip().lower()
 
+    if feature_choice == "a":
+        name_search (username)
+    elif feature_choice == "b":
+      if go_back():
+          feature_choice = choose_features(username)
+          feature_direct(feature_choice, username)
+
+
+def name_search (username) :
+
+
+    """name search page"""
+    draw_line(message="NAME_SEARCH")
+
+    friend_firstname = input("Please your friend's first name: ")
+
+    friend_lastname = input("Please your friend's last name: ")
+
+    result = search_name(friend_firstname,friend_lastname)
+
+    if result == True:
+          print(f"\n{friend_firstname} {friend_lastname} is an existing user on inCollege.")
+    else:
+          print(f"\n{friend_firstname} {friend_lastname} is not yet an existing user on inCollege.")
+   
+    feature_choice = choose_features(username)
+    feature_direct(feature_choice, username)
 
 def learn_skill(username):
     """Learn skill page"""
@@ -256,8 +358,22 @@ def draw_line(message):
     print("-" * terminal_width)
 
 
+def web_opening():
+  print("\"I found making a career difficult, but thanks to inCollege: I was able to find the help that I needed!\" - Hoff Reidman\n")
+
+  video_prompt=input("Would you like to watch their story (Y/N)?")
+
+  if video_prompt == "y" or video_prompt == "Y":
+    print("Video is now playing.\n")
+    time.sleep(5)
+    print("Video is complete.\n")
+
+
 def main():
     """Main function that controls the flow of the program"""
+
+    web_opening()
+  
     decision = main_entry()
 
     username = None
