@@ -8,20 +8,36 @@ c.execute(
     """CREATE TABLE IF NOT EXISTS accounts (
 
           user text,
-          pass text
+          pass text,
+          first text,
+          last text
+
+          )"""
+)
+
+c.execute(
+    """CREATE TABLE IF NOT EXISTS jobs (
+
+          title text,
+          description text,
+          employer text,
+          location text,
+          salary text,
+          first text,
+          last text
 
           )"""
 )
 
 
-def create_user(username, password):
+def create_user(username, password, first, last):
     """Returns True if the user was successfully created, False otherwise"""
     try:
         with conn:
-            # Insert username and password into database
+            # Insert username, password, first name, and last name into database
             c.execute(
-                "INSERT INTO accounts VALUES (:user, :pass)",
-                {"user": username, "pass": password},
+                "INSERT INTO accounts VALUES (:user, :pass, :first, :last)",
+                {"user": username, "pass": password, "first": first, "last":last},
             )
         return True
     except sqlite3.Error as error:
@@ -36,6 +52,39 @@ def does_username_exist(username):
     return user_entry is not None
 
 
+def create_job(title, description, employer, location, salary, first, last):
+    """Returns True if the user was successfully created, False otherwise"""
+    try:
+        with conn:
+            # Insert username, password, first name, and last name into database
+            c.execute(
+                "INSERT INTO jobs VALUES (:title, :description, :employer, :location,:salary, :first, :last)",
+                {"title": title, "description": description, "employer": employer, "location":location, "salary":salary, "first":first , "last":last},
+            )
+        return True
+    except sqlite3.Error as error:
+        print("Failed to insert Python variable into sqlite table", error)
+        return False
+
+def search_name(firstname,lastname):
+    """Returns True if the username already exists in the database, False otherwise"""
+    c.execute("SELECT * FROM accounts WHERE first=:first AND last=:last", {"first":firstname,"last": lastname})
+    user_entry = c.fetchone()
+    return user_entry is not None
+  
+def get_first_name(username):
+    """Returns True if the username already exists in the database, False otherwise"""
+    c.execute("SELECT * FROM accounts WHERE user=:user", {"user": username})
+    user_entry = c.fetchone()
+    return user_entry[2]
+
+def get_last_name(username):
+    """Returns True if the username already exists in the database, False otherwise"""
+    c.execute("SELECT * FROM accounts WHERE user=:user", {"user": username})
+    user_entry = c.fetchone()
+    return user_entry[3]
+  
+
 def check_login(username, password):
     """Returns True if the username and password match a user in the database, False otherwise"""
     c.execute(
@@ -49,6 +98,15 @@ def check_login(username, password):
 def get_num_of_users():
     """Returns the number of users in the database"""
     c.execute("SELECT COUNT(*) FROM accounts")
+    result = c.fetchone()
+    if result:
+        return result[0]  # Extract the count from the result
+    else:
+        return 0  # Return 0 if there are no users in the database
+
+def get_num_of_jobs():
+    """Returns the number of users in the database"""
+    c.execute("SELECT COUNT(*) FROM jobs")
     result = c.fetchone()
     if result:
         return result[0]  # Extract the count from the result
