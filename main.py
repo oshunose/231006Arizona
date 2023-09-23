@@ -133,8 +133,7 @@ def choose_features(username):
     print(f"Hi {username}! What would you like do?")
     for key, value in FEATURES.items():
         print(f"{key}. {value}")
-    feature_choice = input(
-        f"Choose one of {list(FEATURES.keys())}: ").strip().lower()
+    feature_choice = input(f"Choose one of {list(FEATURES.keys())}: ").strip().lower()
 
     if feature_choice in FEATURES:
         print(f"You selected {FEATURES[feature_choice]}")
@@ -160,8 +159,7 @@ def job_search(username):
     print("What would you like to do with jobs?")
     for key, value in JOB_OPTIONS.items():
         print(f"{key}. {value}")
-    feature_choice = input(
-        f"Choose one of {list(JOB_OPTIONS.keys())}:").strip().lower()
+    feature_choice = input(f"Choose one of {list(JOB_OPTIONS.keys())}:").strip().lower()
 
     if feature_choice == "a":
         job_posting(username)
@@ -227,8 +225,8 @@ def name_search():
     """name search page"""
     draw_line(message="NAME_SEARCH")
 
-    friend_firstname = input("Please your friend's first name: ")
-    friend_lastname = input("Please your friend's last name: ")
+    friend_firstname = input("Please enter your friend's first name: ")
+    friend_lastname = input("Please enter your friend's last name: ")
 
     result = search_name(friend_firstname, friend_lastname)
 
@@ -252,8 +250,7 @@ def learn_skill(username):
 
     print("6. Go back")
 
-    skill_choice = input(
-        f"Enter integers from 1 to {len(SKILLS) + 1}: ").strip()
+    skill_choice = input(f"Enter integers from 1 to {len(SKILLS) + 1}: ").strip()
     if skill_choice.isdigit() and 1 <= int(skill_choice) <= len(SKILLS):
         single_skill(username, int(skill_choice))
     elif skill_choice.isdigit() and int(skill_choice) == 6:
@@ -291,8 +288,7 @@ def main_entry():
     decision_in = input("Enter S to sign up or L to log in: ").strip().upper()
     decision = options(decision_in)
     while decision is None:
-        decision_in = input(
-            "Enter S to sign up or L to log in: ").strip().upper()
+        decision_in = input("Enter S to sign up or L to log in: ").strip().upper()
         decision = options(decision_in)
     return decision
 

@@ -5,6 +5,8 @@ from main import *
 # will connect to database, use these values for testing
 # username: testuser
 # password: ValidPass1!
+# first name: Test
+# last name: User
 
 
 # Test 1: Test whether main_entry() reads user's input correctly
@@ -26,13 +28,13 @@ def test_options_fail():
 
 def test_five_acc_made_fail():
     """check if the number of users reached the limit of 5"""
-    assert reached_user_limit(5)
+    assert reached_user_limit(5) is True
 
 
 def test_five_acc_made_success():
     """check that the number of users is less than 5"""
     for i in range(0, 5):
-        assert not reached_user_limit(i)
+        assert reached_user_limit(i) is False
 
 
 # test 3: Error message when 6th account is created
@@ -132,6 +134,86 @@ def mock_no_selected_skill_input(prompt):
         return "N"
 
 
+def mock_watch_video(prompt):
+    if "Would you like to watch their story (Y/N)? " in prompt:
+        return "Y"
+
+
+def mock_not_watch_video(prompt):
+    if "Would you like to watch their story (Y/N)? " in prompt:
+        return "N"
+
+
+def mock_name_search_success(prompt):
+    if "Please enter your friend's first name: " in prompt:
+        return "Test"
+    elif "Please enter your friend's last name: " in prompt:
+        return "User"
+
+
+def mock_name_search_fail(prompt):
+    if "Please enter your friend's first name: " in prompt:
+        return "Test"
+    elif "Please enter your friend's last name: " in prompt:
+        return "NotUser"
+
+
+def test_name_search_success(monkeypatch, capsys):
+    # Mock user input for successful name search
+    monkeypatch.setattr("builtins.input", mock_name_search_success)
+
+    # Call the name_search function
+    name_search()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert the expected output
+    assert "Test User is an existing user on inCollege." in captured.out
+
+
+def test_name_search_fail(monkeypatch, capsys):
+    # Mock user input for failed name search
+    monkeypatch.setattr("builtins.input", mock_name_search_fail)
+
+    # Call the name_search function
+    name_search()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert the expected output
+    assert "Test NotUser is not yet an existing user on inCollege." in captured.out
+
+
+def test_watch_video(monkeypatch, capsys):
+    # Mock user input for watching the video
+    monkeypatch.setattr("builtins.input", mock_watch_video)
+
+    # Call the web_opening function
+    web_opening()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert the expected output
+    assert "Video is now playing..." in captured.out
+
+
+def test_not_watch_video(monkeypatch, capsys):
+    # Mock user input for not watching the video
+    monkeypatch.setattr("builtins.input", mock_not_watch_video)
+
+    # Call the web_opening function
+    web_opening()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert the expected output
+    assert "Video is now playing..." not in captured.out
+
+
 def test_successful_login(monkeypatch, capsys):
     # Mock user input for successful login
     monkeypatch.setattr("builtins.input", mock_success_input)
@@ -159,7 +241,7 @@ def test_failed_login(monkeypatch, capsys):
 
     # Assert the expected output
     assert "Incorrect username / password, please try again" in captured.out
-    assert try_again() == False
+    assert try_again() is False
 
 
 def test_unlimited_logins(monkeypatch):
@@ -167,7 +249,7 @@ def test_unlimited_logins(monkeypatch):
     monkeypatch.setattr("builtins.input", mock_try_again_input)
 
     # Call the try_again function and assert the expected output
-    assert try_again() == True
+    assert try_again() is True
 
 
 def test_features(monkeypatch, capsys):
