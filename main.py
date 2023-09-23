@@ -67,8 +67,7 @@ def login():
 def signup():
     """Signup a new user if the username is not already taken and password meets requirements"""
     db_num_users = get_num_of_users()
-    num_users = check_five_users(db_num_users)
-    if num_users == 1:
+    if reached_user_limit(db_num_users):
         return None
     draw_line(message="Sign Up")
     username = input("Enter your username: ").strip()
@@ -99,20 +98,20 @@ def signup():
         return signup()
 
 
-def check_five_jobs(num_jobs):
+def reached_job_limit(num_jobs):
     """Check if jobs are as many as users"""
     if num_jobs >= USER_NUM_LIMIT:
         print("All permitted jobs have been created, please come back later")
-        return 1
-    return 2
+        return True
+    return False
 
 
-def check_five_users(num_users):
+def reached_user_limit(num_users):
     """Check if users are as many as permitted"""
     if num_users == USER_NUM_LIMIT:
         print("All permitted accounts have been created, please come back later")
-        return 1
-    return 2
+        return True
+    return False
 
 
 def validate_password(input_p):
@@ -175,8 +174,7 @@ def job_search(username):
 def job_posting(username):
     """Post a job page"""
     db_num_jobs = get_num_of_jobs()
-    num_jobs = check_five_jobs(db_num_jobs)
-    if num_jobs == 1:
+    if reached_job_limit(db_num_jobs):
         return None
 
     draw_line(message="JOB_POSTING")

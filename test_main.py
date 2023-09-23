@@ -1,6 +1,6 @@
-from main import *
 from unittest.mock import Mock
 
+from main import *
 
 # will connect to database, use these values for testing
 # username: testuser
@@ -24,22 +24,20 @@ def test_options_fail():
         assert entry is None
 
 
-# test 2: Support five unique student accounts
-# if get_num_of_user = 5 Test is will pass if function returns 1 which will exit the program
 def test_five_acc_made_fail():
-    assert check_five_users(5) is 1
+    """check if the number of users reached the limit of 5"""
+    assert reached_user_limit(5)
 
 
-# if get_num_of_user < 5 Test is will pass if function returns 2 which will continue the program
 def test_five_acc_made_success():
-    num_users = get_num_of_users()
+    """check that the number of users is less than 5"""
     for i in range(0, 5):
-        assert check_five_users(i) is 2
+        assert not reached_user_limit(i)
 
 
 # test 3: Error message when 6th account is created
 def test_error_message_for_sixth_acc_success(capsys):
-    check_five_users(5)
+    reached_user_limit(5)
     captured = capsys.readouterr()
     assert (
         "All permitted accounts have been created, please come back later"
@@ -49,7 +47,7 @@ def test_error_message_for_sixth_acc_success(capsys):
 
 def test_error_message_for_sixth_acc_fail(capsys):
     for i in range(0, 5):
-        check_five_users(i)
+        reached_user_limit(i)
         captured = capsys.readouterr()
         assert (
             "All permitted accounts have been created, please come back later"
