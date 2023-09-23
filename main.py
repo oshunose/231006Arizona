@@ -32,7 +32,7 @@ limit_login = False
 login_attempts = 0
 
 
-def prompt_person_search(username):
+def prompt_person_search():
     """Ask user if they want to search for someone before logging in"""
     decision = (
         input("Before logging in, Do you want to look for someone (Y / N)? ")
@@ -41,22 +41,22 @@ def prompt_person_search(username):
     )
 
     if decision == "Y":
-        name_search(username)
+        name_search()
     elif decision == "N":
         return False
     else:
         print("Invalid input, please try again")
-        prompt_person_search(username)
+        prompt_person_search()
 
 
 def login():
     """Get username and password from user and check if they match a user in the database"""
+    draw_line(message="Login")
     username = input("Enter your username: ").strip()
     password = input("Enter your password: ").strip()
 
     if check_login(username, password):
         print("You have successfully logged in")
-        prompt_person_search(username)
         return username
     else:
         print("Incorrect username / password, please try again")
@@ -70,7 +70,7 @@ def signup():
     num_users = check_five_users(db_num_users)
     if num_users == 1:
         return None
-
+    draw_line(message="Sign Up")
     username = input("Enter your username: ").strip()
     if does_username_exist(username):
         print("Username already exists, please try again")
@@ -134,7 +134,8 @@ def choose_features(username):
     print(f"Hi {username}! What would you like do?")
     for key, value in FEATURES.items():
         print(f"{key}. {value}")
-    feature_choice = input(f"Choose one of {list(FEATURES.keys())}: ").strip().lower()
+    feature_choice = input(
+        f"Choose one of {list(FEATURES.keys())}: ").strip().lower()
 
     if feature_choice in FEATURES:
         print(f"You selected {FEATURES[feature_choice]}")
@@ -160,7 +161,8 @@ def job_search(username):
     print("What would you like to do with jobs?")
     for key, value in JOB_OPTIONS.items():
         print(f"{key}. {value}")
-    feature_choice = input(f"Choose one of {list(JOB_OPTIONS.keys())}:").strip().lower()
+    feature_choice = input(
+        f"Choose one of {list(JOB_OPTIONS.keys())}:").strip().lower()
 
     if feature_choice == "a":
         job_posting(username)
@@ -214,14 +216,16 @@ def friend_search(username):
     )
 
     if feature_choice == "a":
-        name_search(username)
+        name_search()
+        feature_choice = choose_features(username)
+        feature_direct(feature_choice, username)
     elif feature_choice == "b":
         if go_back():
             feature_choice = choose_features(username)
             feature_direct(feature_choice, username)
 
 
-def name_search(username):
+def name_search():
     """name search page"""
     draw_line(message="NAME_SEARCH")
 
@@ -239,9 +243,6 @@ def name_search(username):
             f"\n{friend_firstname} {friend_lastname} is not yet an existing user on inCollege."
         )
 
-    feature_choice = choose_features(username)
-    feature_direct(feature_choice, username)
-
 
 def learn_skill(username):
     """Learn skill page"""
@@ -253,7 +254,8 @@ def learn_skill(username):
 
     print("6. Go back")
 
-    skill_choice = input(f"Enter integers from 1 to {len(SKILLS) + 1}: ").strip()
+    skill_choice = input(
+        f"Enter integers from 1 to {len(SKILLS) + 1}: ").strip()
     if skill_choice.isdigit() and 1 <= int(skill_choice) <= len(SKILLS):
         single_skill(username, int(skill_choice))
     elif skill_choice.isdigit() and int(skill_choice) == 6:
@@ -291,7 +293,8 @@ def main_entry():
     decision_in = input("Enter S to sign up or L to log in: ").strip().upper()
     decision = options(decision_in)
     while decision is None:
-        decision_in = input("Enter S to sign up or L to log in: ").strip().upper()
+        decision_in = input(
+            "Enter S to sign up or L to log in: ").strip().upper()
         decision = options(decision_in)
     return decision
 
@@ -351,10 +354,10 @@ def web_opening():
         '"I found making a career difficult, but thanks to inCollege: I was able to find the help that I needed!" - Hoff Reidman\n'
     )
 
-    video_prompt = input("Would you like to watch their story (Y/N)?")
+    video_prompt = input("Would you like to watch their story (Y/N)? ")
 
     if video_prompt == "y" or video_prompt == "Y":
-        print("Video is now playing.\n")
+        print("Video is now playing...\n")
         time.sleep(5)
         print("Video is complete.\n")
 
@@ -372,6 +375,7 @@ def main():
     if decision == "S":
         username = signup()
     elif decision == "L":
+        prompt_person_search()
         username = login()
 
     if username is None:
