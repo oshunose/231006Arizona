@@ -158,6 +158,32 @@ def mock_name_search_fail(prompt):
         return "NotUser"
 
 
+def mock_signup(prompt):
+    if "Enter your username: " in prompt:
+        return "anothertestuser"
+    elif "Enter your password: " in prompt:
+        return "ValidPass1!"
+    elif "Please insert your first name: " in prompt:
+        return "anotherTest"
+    elif "Please insert your last name: " in prompt:
+        return "anotherUser"
+
+
+def test_signup(monkeypatch, capsys):
+    # Mock user input for successful signup
+    monkeypatch.setattr("builtins.input", mock_signup)
+
+    # Call the signup function
+    signup()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert the expected output
+    assert "Signup successful!" in captured.out
+    assert delete_user("anothertestuser") is True
+
+
 def test_name_search_success(monkeypatch, capsys):
     # Mock user input for successful name search
     monkeypatch.setattr("builtins.input", mock_name_search_success)
