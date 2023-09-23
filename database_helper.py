@@ -37,11 +37,24 @@ def create_user(username, password, first, last):
             # Insert username, password, first name, and last name into database
             c.execute(
                 "INSERT INTO accounts VALUES (:user, :pass, :first, :last)",
-                {"user": username, "pass": password, "first": first, "last":last},
+                {"user": username, "pass": password, "first": first, "last": last},
             )
         return True
     except sqlite3.Error as error:
         print("Failed to insert Python variable into sqlite table", error)
+        return False
+
+
+def delete_user(username):
+    """Returns True if the user was successfully deleted, False otherwise"""
+    try:
+        with conn:
+            # Delete the user with the provided username
+            conn.execute(
+                "DELETE FROM accounts WHERE user = ?", (username,))
+        return True
+    except sqlite3.Error as error:
+        print("Failed to delete user from the sqlite table:", error)
         return False
 
 
@@ -59,31 +72,36 @@ def create_job(title, description, employer, location, salary, first, last):
             # Insert username, password, first name, and last name into database
             c.execute(
                 "INSERT INTO jobs VALUES (:title, :description, :employer, :location,:salary, :first, :last)",
-                {"title": title, "description": description, "employer": employer, "location":location, "salary":salary, "first":first , "last":last},
+                {"title": title, "description": description, "employer": employer,
+                    "location": location, "salary": salary, "first": first, "last": last},
             )
         return True
     except sqlite3.Error as error:
         print("Failed to insert Python variable into sqlite table", error)
         return False
 
-def search_name(firstname,lastname):
+
+def search_name(firstname, lastname):
     """Returns True if the username already exists in the database, False otherwise"""
-    c.execute("SELECT * FROM accounts WHERE first=:first AND last=:last", {"first":firstname,"last": lastname})
+    c.execute("SELECT * FROM accounts WHERE first=:first AND last=:last",
+              {"first": firstname, "last": lastname})
     user_entry = c.fetchone()
     return user_entry is not None
-  
+
+
 def get_first_name(username):
     """Returns True if the username already exists in the database, False otherwise"""
     c.execute("SELECT * FROM accounts WHERE user=:user", {"user": username})
     user_entry = c.fetchone()
     return user_entry[2]
 
+
 def get_last_name(username):
     """Returns True if the username already exists in the database, False otherwise"""
     c.execute("SELECT * FROM accounts WHERE user=:user", {"user": username})
     user_entry = c.fetchone()
     return user_entry[3]
-  
+
 
 def check_login(username, password):
     """Returns True if the username and password match a user in the database, False otherwise"""
@@ -103,6 +121,7 @@ def get_num_of_users():
         return result[0]  # Extract the count from the result
     else:
         return 0  # Return 0 if there are no users in the database
+
 
 def get_num_of_jobs():
     """Returns the number of users in the database"""
