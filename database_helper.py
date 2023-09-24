@@ -50,7 +50,7 @@ def delete_user(username):
     try:
         with conn:
             # Delete the user with the provided username
-            conn.execute(
+            c.execute(
                 "DELETE FROM accounts WHERE user = ?", (username,))
         return True
     except sqlite3.Error as error:
@@ -78,6 +78,18 @@ def create_job(title, description, employer, location, salary, first, last):
         return True
     except sqlite3.Error as error:
         print("Failed to insert Python variable into sqlite table", error)
+        return False
+
+
+def delete_job(title):
+    """Returns True if the job was successfully deleted, False otherwise"""
+    try:
+        with conn:
+            # Delete the job with the provided title
+            c.execute("DELETE FROM jobs WHERE title = ?", (title,))
+        return True
+    except sqlite3.Error as error:
+        print("Failed to delete job from the sqlite table:", error)
         return False
 
 
