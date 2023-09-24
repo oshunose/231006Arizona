@@ -272,6 +272,7 @@ def test_signup(monkeypatch, capsys):
 
     # Assert the expected output
     assert "Signup successful!" in captured.out
+    assert delete_user("anothertestuser") is True
 
 
 def test_name_search_success(monkeypatch, capsys):
@@ -353,7 +354,8 @@ def friend_search_fail_input_2(prompt):
 
 
 def test_friend_search_pass(monkeypatch, capsys):
-    create_user(username="testuser", password="ValidPass1!", first="Test", last="User")
+    create_user(username="testuser", password="ValidPass1!",
+                first="Test", last="User")
     monkeypatch.setattr("builtins.input", friend_search_pass_input)
     name_search()
     captured = capsys.readouterr()
@@ -362,7 +364,8 @@ def test_friend_search_pass(monkeypatch, capsys):
 
 
 def test_friend_search_fail_1(monkeypatch, capsys):
-    create_user(username="testuser", password="ValidPass1!", first="Test", last="User")
+    create_user(username="testuser", password="ValidPass1!",
+                first="Test", last="User")
     monkeypatch.setattr("builtins.input", friend_search_fail_input)
     name_search()
     captured = capsys.readouterr()
@@ -372,7 +375,8 @@ def test_friend_search_fail_1(monkeypatch, capsys):
 
 
 def test_friend_search_fail_2(monkeypatch, capsys):
-    create_user(username="testuser", password="ValidPass1!", first="Test", last="User")
+    create_user(username="testuser", password="ValidPass1!",
+                first="Test", last="User")
     monkeypatch.setattr("builtins.input", friend_search_fail_input_2)
     name_search()
     captured = capsys.readouterr()
