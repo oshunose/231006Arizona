@@ -2,6 +2,7 @@ from unittest.mock import Mock
 
 from main import *
 
+
 # will connect to database, use these values for testing
 # username: testuser
 # password: ValidPass1!
@@ -42,8 +43,8 @@ def test_error_message_for_sixth_acc_success(capsys):
     reached_user_limit(5)
     captured = capsys.readouterr()
     assert (
-        "All permitted accounts have been created, please come back later"
-        in captured.out
+            "All permitted accounts have been created, please come back later"
+            in captured.out
     )
 
 
@@ -52,8 +53,8 @@ def test_error_message_for_sixth_acc_fail(capsys):
         reached_user_limit(i)
         captured = capsys.readouterr()
         assert (
-            "All permitted accounts have been created, please come back later"
-            not in captured.out
+                "All permitted accounts have been created, please come back later"
+                not in captured.out
         )
 
 
@@ -181,10 +182,10 @@ def test_signup(monkeypatch, capsys):
 
     # Assert the expected output
     assert "Signup successful!" in captured.out
-    assert delete_user("anothertestuser") is True
 
 
 def test_name_search_success(monkeypatch, capsys):
+    create_user('testuser', 'ValidPass1!', 'Test', 'User')
     # Mock user input for successful name search
     monkeypatch.setattr("builtins.input", mock_name_search_success)
 
@@ -242,6 +243,7 @@ def test_not_watch_video(monkeypatch, capsys):
 
 def test_successful_login(monkeypatch, capsys):
     # Mock user input for successful login
+    create_user('testuser', 'ValidPass1!', 'Test', 'User')
     monkeypatch.setattr("builtins.input", mock_success_input)
 
     # Call the login function
@@ -294,34 +296,6 @@ def test_features(monkeypatch, capsys):
     assert "c. Learn a new skill" in captured.out
 
 
-def test_job_search(monkeypatch, capsys):
-    # Mock user input for go_back function
-    monkeypatch.setattr("builtins.input", mock_go_back_input)
-
-    # Call the job_search function
-    job_search("testuser")
-
-    # Capture the printed output
-    captured = capsys.readouterr()
-
-    # Assert that the expected message is printed
-    assert "under construction" in captured.out
-
-
-def test_friend_search(monkeypatch, capsys):
-    # Mock user input for friend_search function
-    monkeypatch.setattr("builtins.input", mock_go_back_input)
-
-    # Call the friend_search function
-    friend_search("testuser")
-
-    # Capture the printed output
-    captured = capsys.readouterr()
-
-    # Assert that the expected message is printed
-    assert "under construction" in captured.out
-
-
 def test_learn_skill(monkeypatch, capsys):
     # Mock user input for learn_skill function
     monkeypatch.setattr("builtins.input", mock_learn_skill_input)
@@ -339,7 +313,6 @@ def test_learn_skill(monkeypatch, capsys):
     assert "4. JavaScript" in captured.out
     assert "5. SQL" in captured.out
     assert "6. Go back" in captured.out
-    assert "under construction" in captured.out
 
 
 def test_no_selected_skill(monkeypatch, capsys):
@@ -354,3 +327,133 @@ def test_no_selected_skill(monkeypatch, capsys):
 
     # Assert that the expected message is printed
     assert "Not picking to learn a new skill?" in captured.out
+
+
+"-------------------------------------------------------------------------------------"
+
+
+def friend_search_pass_input(prompt):
+    if "Please enter your friend's first name: " in prompt:
+        return "Test"
+    if "Please enter your friend's last name: " in prompt:
+        return "User"
+
+
+def friend_search_fail_input(prompt):
+    if "Please enter your friend's first name: " in prompt:
+        return "test"
+    if "Please enter your friend's last name: " in prompt:
+        return "user"
+
+
+def friend_search_fail_input_2(prompt):
+    if "Please enter your friend's first name: " in prompt:
+        return "jack"
+    if "Please enter your friend's last name: " in prompt:
+        return "mack"
+
+
+def test_friend_search_pass(monkeypatch, capsys):
+    create_user(username='testuser', password='ValidPass1!', first='Test', last='User')
+    monkeypatch.setattr("builtins.input", friend_search_pass_input)
+    name_search()
+    captured = capsys.readouterr()
+    assert "is an existing user on inCollege." in captured.out
+    assert search_name('Test', 'User') is True
+
+
+def test_friend_search_fail_1(monkeypatch, capsys):
+    create_user(username='testuser', password='ValidPass1!', first='Test', last='User')
+    monkeypatch.setattr("builtins.input", friend_search_fail_input)
+    name_search()
+    captured = capsys.readouterr()
+
+    assert "is not yet an existing user on inCollege." in captured.out
+    assert search_name('test', 'user') is False
+
+
+def test_friend_search_fail_2(monkeypatch, capsys):
+    create_user(username='testuser', password='ValidPass1!', first='Test', last='User')
+    monkeypatch.setattr("builtins.input", friend_search_fail_input_2)
+    name_search()
+    captured = capsys.readouterr()
+
+    assert "is not yet an existing user on inCollege." in captured.out
+    assert search_name('test', 'user') is False
+
+
+def go_back_pass_input(prompt):
+    if "Choose one of" in prompt:
+        return "b"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def go_back_learn_skill_pass_input(prompt):
+    if "Enter integers from 1 to " in prompt:
+        return "6"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_job_search_go_back(monkeypatch, capsys):
+    monkeypatch.setattr("builtins.input", go_back_pass_input)
+    job_search('testuser')
+    captured = capsys.readouterr()
+    assert "Go back" in captured.out
+
+
+def test_friend_search_go_back(monkeypatch, capsys):
+    monkeypatch.setattr("builtins.input", go_back_pass_input)
+    friend_search('testuser')
+    captured = capsys.readouterr()
+    assert "Go back" in captured.out
+
+
+def test_learn_skill_go_back(monkeypatch, capsys):
+    monkeypatch.setattr("builtins.input", go_back_learn_skill_pass_input)
+    learn_skill('testuser')
+    captured = capsys.readouterr()
+    assert "Go back" in captured.out
+
+
+def test_check_five_jobs_pass(capsys):
+    for i in range(0, 5):
+        assert reached_job_limit(i) is False
+
+
+def test_check_five_jobs_fail(capsys):
+    assert reached_job_limit(5) is True
+    captured = capsys.readouterr()
+    assert "All permitted jobs have been created, please come back later" in captured.out
+
+
+def create_job_pass_input(prompt):
+    if "Please enter the job's title: " in prompt:
+        return "Software Engineer"
+    if "Please enter the job's description: " in prompt:
+        return "Code accurate and fast software"
+    if "Please enter the job's employer: " in prompt:
+        return "Google"
+    if "Please enter the job's location: " in prompt:
+        return "Los Angeles, CA"
+    if "Please enter the job's salary: " in prompt:
+        return "$125,000"
+    if "Choose one of" in prompt:
+        return "b"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_create_job_pass(monkeypatch, capsys):
+    create_job(title='a', description='b', employer='c', location='d', salary='e', first='f', last='g')
+    create_job(title='a', description='b', employer='c', location='d', salary='e', first='f', last='g')
+    create_job(title='a', description='b', employer='c', location='d', salary='e', first='f', last='g')
+    create_job(title='a', description='b', employer='c', location='d', salary='e', first='f', last='g')
+    monkeypatch.setattr("builtins.input", create_job_pass_input)
+    job_posting('testuser')
+    captured = capsys.readouterr()
+    assert "JOB_POSTING" in captured.out
+    assert "title" or "description" or "employer" or "location" or "salary" in captured.out
+    assert "Failed to insert Python variable into sqlite table" not in captured.out
+    assert "\nJob created: Thank You for posting. We hope you'll find great employees!\n" in captured.out
