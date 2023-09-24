@@ -499,3 +499,5 @@ def test_create_job_pass(monkeypatch, capsys):
         "\nJob created: Thank You for posting. We hope you'll find great employees!\n"
         in captured.out
     )
+    assert delete_job("a") is True
+    assert delete_job("Software Engineer") is True
