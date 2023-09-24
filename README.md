@@ -1,9 +1,11 @@
 **_ FILE STRUCTURE _**
+
 `main.py` file manages the logic
 `database_helper.py` creates functions that abstract database operations
 `test_main.py` contains unit tests
 
 **_ HOW TO RUN _**
+
 simply run `python main.py` in the terminal
 make sure your terminal is in the same directory as the files
 
