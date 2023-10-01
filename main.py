@@ -50,7 +50,6 @@ INCOLLEGE_IMPORTANT_LINKS_GROUP = {
     "f": "Cookie Policy",
     "g": "Copyright Policy",
     "h": "Brand Policy",
-    
     "i": "Languages",
     "j": "Go back",
 }
@@ -76,19 +75,12 @@ SIGNED_IN_GENERAL_LINKS_GROUP = {
     "g": "Go back",
 }
 
-GUEST_CONTROLS = {
-    "a" : "Email",
-    "b" : "SMS",
-    "c" : "Target_Advertising"
-}
+GUEST_CONTROLS = {"a": "Email", "b": "SMS", "c": "Target_Advertising"}
 
-TURN_ON_OFF = {
-    "a" : "Turn On",
-    "b" : "Turn Off"
-}
+TURN_ON_OFF = {"a": "Turn On", "b": "Turn Off"}
 
 SKILLS = ["Python", "Java", "C++", "JavaScript", "SQL"]
-LANGUAGES = {"a":"English","b":"Spanish"}
+LANGUAGES = {"a": "English", "b": "Spanish"}
 
 
 limit_login = False
@@ -96,7 +88,7 @@ login_attempts = 0
 signed_in = False
 language = ""
 email = 0
-SMS = 0 
+SMS = 0
 target_ads = 0
 
 
@@ -127,7 +119,7 @@ def login():
         print("You have successfully logged in")
         global signed_in
         signed_in = True
-        
+
         return username
     else:
         print("Incorrect username / password, please try again")
@@ -163,7 +155,7 @@ def signup():
 
     if create_user(username, password, firstname, lastname):
         print("Signup successful!")
-        global signed_in 
+        global signed_in
         signed_in = True
         language = "English"
         email = 1
@@ -360,7 +352,9 @@ def choose_navigation_link():
     print("What link would you like to go to?")
     for key, value in NAVIGATION_LINKS_GROUP.items():
         print(f"{key}. {value}")
-    navigation_link_choice = input(f"Choose one of {list(NAVIGATION_LINKS_GROUP.keys())}: ").strip().lower()
+    navigation_link_choice = (
+        input(f"Choose one of {list(NAVIGATION_LINKS_GROUP.keys())}: ").strip().lower()
+    )
 
     if navigation_link_choice in NAVIGATION_LINKS_GROUP:
         print(f"You selected {NAVIGATION_LINKS_GROUP[navigation_link_choice]}")
@@ -368,7 +362,7 @@ def choose_navigation_link():
     else:
         print("Link not identfied. Please try again")
         return choose_navigation_link()
-    
+
 
 def navigation_link_direct(navigation_link_choice, username="test"):
     """Direct user to the naviagation link they chose"""
@@ -390,7 +384,9 @@ def choose_useful_links():
     print("What link would you like to go to?")
     for key, value in USEFUL_LINKS_GROUP.items():
         print(f"{key}. {value}")
-    useful_link_choice = input(f"Choose one of {list(USEFUL_LINKS_GROUP.keys())}: ").strip().lower()
+    useful_link_choice = (
+        input(f"Choose one of {list(USEFUL_LINKS_GROUP.keys())}: ").strip().lower()
+    )
 
     if useful_link_choice in USEFUL_LINKS_GROUP:
         print(f"You selected {USEFUL_LINKS_GROUP[useful_link_choice]}")
@@ -413,7 +409,6 @@ def useful_link_direct(useful_link_choice):
     elif useful_link_choice == "e":
         if go_back():
             choose_navigation_link()
-
 
 
 def important_link_direct(important_link_choice):
@@ -440,20 +435,26 @@ def important_link_direct(important_link_choice):
         if go_back():
             choose_navigation_link()
 
+
 def choose_incollege_important_links():
     draw_line(message="InCollege Important Links")
     print("What link would you like to go to?")
     for key, value in INCOLLEGE_IMPORTANT_LINKS_GROUP.items():
         print(f"{key}. {value}")
-    important_link_choice = input(f"Choose one of {list(INCOLLEGE_IMPORTANT_LINKS_GROUP.keys())}: ").strip().lower()
+    important_link_choice = (
+        input(f"Choose one of {list(INCOLLEGE_IMPORTANT_LINKS_GROUP.keys())}: ")
+        .strip()
+        .lower()
+    )
 
     if important_link_choice in INCOLLEGE_IMPORTANT_LINKS_GROUP:
         print(f"You selected {INCOLLEGE_IMPORTANT_LINKS_GROUP[important_link_choice]}")
         important_link_direct(important_link_choice)
     else:
         print("Link not identified. Please try again")
-        return choose_incollege_important_links() 
-    
+        return choose_incollege_important_links()
+
+
 def copyright_notice():
     draw_line(message="A Copyright Notice")
 
@@ -463,23 +464,32 @@ def copyright_notice():
     if go_back():
         choose_incollege_important_links()
 
+
 def accessibility():
     draw_line(message="Accessibility")
 
-    print("We are committed to ensuring that our platform is accessible to all users,including those with disabilities. Here are some of the features we have implemented to enhance accessibility: ")
+    print(
+        "We are committed to ensuring that our platform is accessible to all users,including those with disabilities. Here are some of the features we have implemented to enhance accessibility: "
+    )
     print("Coming Soon🙂")
-    print("If you encounter any accessibility issues or have suggestions for improvement,please contact us at Team Arizona.")
+    print(
+        "If you encounter any accessibility issues or have suggestions for improvement,please contact us at Team Arizona."
+    )
 
     if go_back():
         choose_incollege_important_links()
+
 
 def user_agreement():
     draw_line(message="User Agreement")
 
-    print("By using our platform, you agree to abide by the following terms and conditions: \n <Respect the rights of other users> \n <Do not engage in any unlawful activities on our platform.> \n <Abide by our community guidelines.> \n <Protect your account credentials and personal information.> \n <Report any suspicious or inappropriate content.> \n \n \n <Failure to comply with these terms may result in account suspension or termination.>")
+    print(
+        "By using our platform, you agree to abide by the following terms and conditions: \n <Respect the rights of other users> \n <Do not engage in any unlawful activities on our platform.> \n <Abide by our community guidelines.> \n <Protect your account credentials and personal information.> \n <Report any suspicious or inappropriate content.> \n \n \n <Failure to comply with these terms may result in account suspension or termination.>"
+    )
 
     if go_back():
         choose_incollege_important_links()
+
 
 def privacy_policy():
     draw_line(message="Privacy Policy")
@@ -496,31 +506,38 @@ def privacy_policy():
             choose_incollege_important_links()
 
 
-    
-
 def cookie_policy():
     draw_line(message="Cookie Policy")
 
-    print("Our website uses cookies to improve your experience. By continuing to use our site, you accept our use of cookies.")
+    print(
+        "Our website uses cookies to improve your experience. By continuing to use our site, you accept our use of cookies."
+    )
 
     if go_back():
         choose_incollege_important_links()
+
 
 def copyright_policy():
     draw_line(message="Copyright Policy")
 
-    print("All content on this platform is protected by copyright laws. The content includes but is not limited to text, images, logos, and graphics \n You may not reproduce, distribute, or modify our content without explicit written permission from us \n For copyright-related inquiries, please contact: legal@incollege.com.")
+    print(
+        "All content on this platform is protected by copyright laws. The content includes but is not limited to text, images, logos, and graphics \n You may not reproduce, distribute, or modify our content without explicit written permission from us \n For copyright-related inquiries, please contact: legal@incollege.com."
+    )
 
     if go_back():
         choose_incollege_important_links()
+
 
 def brand_policy():
     draw_line(message="Brand Policy")
 
-    print("Our brand is a valuable asset, including our name, logo, and visual identity. To maintain consistency and integrity, we have established guidelines for the use of our brand elements. \n \n You may not use our brand elements without prior written permission. Any use must adhere to our brand guidelines \n \n If you require the use of our brand for any purpose, please contact us to request approval.")
+    print(
+        "Our brand is a valuable asset, including our name, logo, and visual identity. To maintain consistency and integrity, we have established guidelines for the use of our brand elements. \n \n You may not use our brand elements without prior written permission. Any use must adhere to our brand guidelines \n \n If you require the use of our brand for any purpose, please contact us to request approval."
+    )
 
     if go_back():
         choose_incollege_important_links()
+
 
 def guest_controls():
     draw_line(message="Guest Controls")
@@ -534,54 +551,63 @@ def guest_controls():
 
     if go_back():
         choose_incollege_important_links()
+
+
 def turn_on_off(x):
     for key, value in TURN_ON_OFF.items():
-            print(f"{key}. {value}")
+        print(f"{key}. {value}")
     option = input(f"Choose one of {list(TURN_ON_OFF.keys())}:").strip().lower()
 
-    if x=="a":
+    if x == "a":
         if option == "a":
             email = 1
         else:
             email = 0
-          
+
         return email
-      
-    elif x=="b":
+
+    elif x == "b":
         if option == "a":
             SMS = 1
         else:
             SMS = 0
 
         return SMS
-      
-    elif x=="c":
+
+    elif x == "c":
         if option == "a":
             target_ads = 1
         else:
             target_ads = 0
 
         return target_ads
-      
+
+
 def languages():
     draw_line(message="Languages")
 
     if signed_in:
         for key, value in LANGUAGES.items():
             print(f"{key}. {value}")
-        language = LANGUAGES[input(f"Choose one of {list(LANGUAGES.keys())}:").strip().lower()]
+        language = LANGUAGES[
+            input(f"Choose one of {list(LANGUAGES.keys())}:").strip().lower()
+        ]
     print(f"Congratulations, the app language has been changed to {language}")
     if go_back():
         choose_incollege_important_links()
+
 
 def about_important():
     """Browse About page"""
     draw_line(message="About")
 
-    print("In College: Welcome to In College, the world's largest college student network with many users in many countries and territories worldwide")
+    print(
+        "In College: Welcome to In College, the world's largest college student network with many users in many countries and territories worldwide"
+    )
 
     if go_back():
         choose_incollege_important_links()
+
 
 def general():
     """Display general links and get user's choice"""
@@ -591,10 +617,16 @@ def general():
     if signed_in == False:
         for key, value in NOT_SIGNED_IN_GENERAL_LINKS_GROUP.items():
             print(f"{key}. {value}")
-        general_link_choice = input(f"Choose one of {list(NOT_SIGNED_IN_GENERAL_LINKS_GROUP.keys())}: ").strip().lower()
+        general_link_choice = (
+            input(f"Choose one of {list(NOT_SIGNED_IN_GENERAL_LINKS_GROUP.keys())}: ")
+            .strip()
+            .lower()
+        )
 
         if general_link_choice in NOT_SIGNED_IN_GENERAL_LINKS_GROUP:
-            print(f"You selected {NOT_SIGNED_IN_GENERAL_LINKS_GROUP[general_link_choice]}")
+            print(
+                f"You selected {NOT_SIGNED_IN_GENERAL_LINKS_GROUP[general_link_choice]}"
+            )
             return non_signed_in_general_direct(general_link_choice)
         else:
             print("Link not identfied. Please try again")
@@ -602,7 +634,11 @@ def general():
     else:
         for key, value in SIGNED_IN_GENERAL_LINKS_GROUP.items():
             print(f"{key}. {value}")
-        general_link_choice = input(f"Choose one of {list(SIGNED_IN_GENERAL_LINKS_GROUP.keys())}: ").strip().lower()
+        general_link_choice = (
+            input(f"Choose one of {list(SIGNED_IN_GENERAL_LINKS_GROUP.keys())}: ")
+            .strip()
+            .lower()
+        )
 
         if general_link_choice in SIGNED_IN_GENERAL_LINKS_GROUP:
             print(f"You selected {SIGNED_IN_GENERAL_LINKS_GROUP[general_link_choice]}")
@@ -610,7 +646,6 @@ def general():
         else:
             print("Link not identfied. Please try again")
             return general()
-
 
 
 def non_signed_in_general_direct(general_link_choice):
@@ -667,7 +702,9 @@ def about():
     """Browse About page"""
     draw_line(message="Press")
 
-    print("In College: Welcome to In College, the world's largest college student network with many users in many countries and territories worldwide")
+    print(
+        "In College: Welcome to In College, the world's largest college student network with many users in many countries and territories worldwide"
+    )
 
     if go_back():
         general()
@@ -741,10 +778,7 @@ def directories():
 
     if go_back():
         choose_useful_links()
-    
 
-
-    
 
 def main_entry():
     """Welcome page and get the user into the system through login or signup"""
@@ -824,7 +858,9 @@ def web_opening():
 
 def links_or_login():
     """Prompts user to either use the navigation links or to login page"""
-    links_prompt = input("Do you want to navigate and explore InCollege while logged out (Y/N)? ")
+    links_prompt = input(
+        "Do you want to navigate and explore InCollege while logged out (Y/N)? "
+    )
 
     if links_prompt == "y" or links_prompt == "Y":
         choose_navigation_link()
