@@ -1,4 +1,4 @@
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from main import *
 
@@ -506,6 +506,211 @@ def test_create_job_pass(monkeypatch, capsys):
 
 
 "------------------ EPIC #3 ---------------------------------------------------"
+
+
+def mock_choose_useful_links(prompt):
+    if "Choose one of ['a', 'b', 'c', 'd', 'e']: " in prompt:
+        return "a"
+
+
+def test_choose_useful_links(monkeypatch, capsys):
+    """Mock user input for useful_links function"""
+    monkeypatch.setattr("builtins.input", mock_choose_useful_links)
+    monkeypatch.setattr("main.useful_link_direct", Mock())
+
+    # Call the useful_links function
+    choose_useful_links()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the expected message is printed
+    assert "a. General" in captured.out
+    assert "b. Browse InCollege" in captured.out
+    assert "c. Business Solutions" in captured.out
+    assert "d. Directories" in captured.out
+    assert "e. Go back" in captured.out
+
+
+def mock_general_signed_in(prompt):
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g']: " in prompt:
+        return "a"
+
+
+@patch("main.signed_in", True)
+def test_general_signed_in(monkeypatch, capsys):
+    """Mock user input for general function"""
+    monkeypatch.setattr("builtins.input", mock_general_signed_in)
+    monkeypatch.setattr("main.signed_in_general_direct", Mock())
+
+    # Call the general function
+    general()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the expected message is printed
+    assert "a. Help Center" in captured.out
+    assert "b. About" in captured.out
+    assert "c. Press" in captured.out
+    assert "d. Blog" in captured.out
+    assert "e. Careers" in captured.out
+    assert "f. Developers" in captured.out
+    assert "g. Go back" in captured.out
+
+
+def mock_general_not_signed_in(prompt):
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
+        return "a"
+
+
+@patch("main.signed_in", False)
+def test_general_not_signed_in(monkeypatch, capsys):
+    """Mock user input for general function"""
+    monkeypatch.setattr("builtins.input", mock_general_not_signed_in)
+    monkeypatch.setattr("main.non_signed_in_general_direct", Mock())
+
+    # Call the general function
+    general()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the expected message is printed
+    assert "a. Sign Up" in captured.out
+    assert "b. Help Center" in captured.out
+    assert "c. About" in captured.out
+    assert "d. Press" in captured.out
+    assert "e. Blog" in captured.out
+    assert "f. Careers" in captured.out
+    assert "g. Developers" in captured.out
+    assert "h. Go back" in captured.out
+
+
+def test_help_center(monkeypatch, capsys):
+    """Mock user input for help_center function"""
+    monkeypatch.setattr("main.go_back", Mock())
+    monkeypatch.setattr("main.general", Mock())
+    # Call the help_center function
+    help_center()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the expected message is printed
+    assert "We're here to help" in captured.out
+
+
+def test_about(monkeypatch, capsys):
+    """Mock user input for about function"""
+    monkeypatch.setattr("main.go_back", Mock())
+    monkeypatch.setattr("main.general", Mock())
+    # Call the about function
+    about()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the expected message is printed
+    assert (
+        "In College: Welcome to In College, the world's largest college student network with many users in many countries and territories worldwide"
+        in captured.out
+    )
+
+
+def test_press(monkeypatch, capsys):
+    """Mock user input for press function"""
+    monkeypatch.setattr("main.go_back", Mock())
+    monkeypatch.setattr("main.general", Mock())
+    # Call the press function
+    press()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the expected message is printed
+    assert (
+        "In College Pressroom: Stay on top of the latest news, updates, and reports"
+        in captured.out
+    )
+
+
+def test_blog(monkeypatch, capsys):
+    """Mock user input for blog function"""
+    monkeypatch.setattr("main.go_back", Mock())
+    monkeypatch.setattr("main.general", Mock())
+    # Call the blog function
+    blog()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the expected message is printed
+    assert "Under construction" in captured.out
+
+
+def test_careers(monkeypatch, capsys):
+    """Mock user input for careers function"""
+    monkeypatch.setattr("main.go_back", Mock())
+    monkeypatch.setattr("main.general", Mock())
+    # Call the careers function
+    careers()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the expected message is printed
+    assert "Under construction" in captured.out
+
+
+def test_developers(monkeypatch, capsys):
+    """Mock user input for developers function"""
+    monkeypatch.setattr("main.go_back", Mock())
+    monkeypatch.setattr("main.general", Mock())
+    # Call the developers function
+    developers()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the expected message is printed
+    assert "Under construction" in captured.out
+
+
+def test_browse_incollege(monkeypatch, capsys):
+    """Mock user input for browse_incollege function"""
+    monkeypatch.setattr("main.go_back", Mock())
+    monkeypatch.setattr("main.choose_useful_links", Mock())
+
+    browse_incollege()
+
+    captured = capsys.readouterr()
+
+    assert "Under construction" in captured.out
+
+
+def test_business_solutions(monkeypatch, capsys):
+    """Mock user input for business_solutions function"""
+    monkeypatch.setattr("main.go_back", Mock())
+    monkeypatch.setattr("main.choose_useful_links", Mock())
+
+    business_solutions()
+
+    captured = capsys.readouterr()
+
+    assert "Under construction" in captured.out
+
+
+def test_directories(monkeypatch, capsys):
+    """Mock user input for directories function"""
+    monkeypatch.setattr("main.go_back", Mock())
+    monkeypatch.setattr("main.choose_useful_links", Mock())
+
+    directories()
+
+    captured = capsys.readouterr()
+
+    assert "Under construction" in captured.out
 
 
 # Designed to mock the transition from navigation to imporant links
