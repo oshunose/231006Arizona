@@ -530,7 +530,7 @@ def guest_controls():
             print(f"{key}. {value}")
         option = input(f"Choose one of {list(GUEST_CONTROLS.keys())}:").strip().lower()
 
-    turn_on_off(option)
+    change = turn_on_off(option)
 
     if go_back():
         choose_incollege_important_links()
@@ -544,16 +544,25 @@ def turn_on_off(x):
             email = 1
         else:
             email = 0
+          
+        return email
+      
     elif x=="b":
         if option == "a":
             SMS = 1
         else:
             SMS = 0
+
+        return SMS
+      
     elif x=="c":
         if option == "a":
             target_ads = 1
         else:
             target_ads = 0
+
+        return target_ads
+      
 def languages():
     draw_line(message="Languages")
 
