@@ -1,7 +1,9 @@
 **_ FILE STRUCTURE _**
 
 `main.py` file manages the logic
+
 `database_helper.py` creates functions that abstract database operations
+
 `test_main.py` contains unit tests
 
 **_ HOW TO RUN _**
@@ -25,6 +27,7 @@ make sure your terminal is in the same directory as the files
 - Update this doc if outdated
 
 **_ RECOMMENDED TOOLS _**
+
 These are some good python formatters:
 
 ```
