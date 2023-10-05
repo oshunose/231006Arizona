@@ -77,6 +77,11 @@ SIGNED_IN_GENERAL_LINKS_GROUP = {
     "g": "Go back",
 }
 
+FRIEND_REQUEST = {
+    "a": "Accept",
+    "r": "Reject"
+}
+
 GUEST_CONTROLS = {"a": "Email", "b": "SMS", "c": "Target_Advertising"}
 
 TURN_ON_OFF = {"a": "Turn On", "b": "Turn Off"}
@@ -92,6 +97,50 @@ language = ""
 email = 0
 SMS = 0
 target_ads = 0
+
+def check_friend_request(username):
+    """Check if friend request table is filled, if yes ask to accept or deny, if no continue"""
+    friend_request = does_username_have_friend_request(username)
+    draw_line(message="Pending Friend Request")
+    if friend_request:
+        print(f"You have a pending friend request from {friend_request}! Would you like to accept or reject?")
+        for key, value in FRIEND_REQUEST.items():
+            print(f"{key}. {value}")
+        friend_request_choice = input(f"Would you like to accept or reject? "
+                                      f"Choose one of {list(FRIEND_REQUEST.keys())}: ").strip().lower()
+        if friend_request_choice == 'a':
+            """Add code to add friend to friend_list in database_helper and delete from friends"""
+            print("Friend Added!")
+        elif friend_request_choice == 'r':
+            delete_friend(friend_request)
+            print("Friend Rejected!")
+    else:
+        print("You have no friend requests!")
+
+    return
+
+def delete_friend(friend_username):
+    """Returns True if the friend was successfully deleted, False otherwise"""
+    try:
+        with conn:
+            # Delete the friend with the provided username
+            c.execute(
+                "DELETE FROM friends WHERE friend_user = ?", (friend_username,))
+        return True
+    except sqlite3.Error as error:
+        print("Failed to delete user from the sqlite table:", error)
+        return False
+
+
+def does_username_have_friend_request(username):
+    """Returns friend username if the username already exists in the friends, False otherwise"""
+    c.execute("SELECT * FROM friends WHERE user=:user", {"user": username})
+    user_entry = c.fetchone()
+    if user_entry:
+        return user_entry[1]
+    else:
+        return False
+
 
 
 def prompt_person_search():
