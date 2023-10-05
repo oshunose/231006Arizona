@@ -10,7 +10,9 @@ c.execute(
           user text,
           pass text,
           first text,
-          last text
+          last text,
+          university text,
+          major text
 
           )"""
 )
@@ -29,19 +31,27 @@ c.execute(
           )"""
 )
 
+c.execute(
+    """CREATE TABLE IF NOT EXISTS friends (
+    
+          user text,
+          friend_user text
 
-def create_user(username, password, first, last):
+          )"""
+)
+
+def create_user(username, password, first, last, university, major):
     """Returns True if the user was successfully created, False otherwise"""
     try:
         with conn:
             # Insert username, password, first name, and last name into database
             c.execute(
-                "INSERT INTO accounts VALUES (:user, :pass, :first, :last)",
-                {"user": username, "pass": password, "first": first, "last": last},
+                "INSERT INTO accounts VALUES (:user, :pass, :first, :last, :university, :major)",
+                {"user": username, "pass": password, "first": first, "last": last, "university": university, "major": major},
             )
         return True
     except sqlite3.Error as error:
-        print("Failed to insert Python variable into sqlite table", error)
+        print("Failed to add user into sqlite table:", error)
         return False
 
 
@@ -77,7 +87,7 @@ def create_job(title, description, employer, location, salary, first, last):
             )
         return True
     except sqlite3.Error as error:
-        print("Failed to insert Python variable into sqlite table", error)
+        print("Failed to add job into sqlite table:", error)
         return False
 
 
@@ -93,12 +103,54 @@ def delete_job(title):
         return False
 
 
+def add_friend(username, friend_username):
+    """Returns True if the friend was successfully added into the database, False otherwise"""
+    try:
+        with conn:
+            c.execute("INSERT INTO friends VALUES (:user, :friend_user)",
+                      {"user": username, "friend_user": friend_username})
+        return True
+    except sqlite3.Error as error:
+        print("Failed to add friend to the sqlite table:", error)
+        return False
+
+
 def search_name(firstname, lastname):
     """Returns True if the username already exists in the database, False otherwise"""
     c.execute("SELECT * FROM accounts WHERE first=:first AND last=:last",
               {"first": firstname, "last": lastname})
     user_entry = c.fetchone()
     return user_entry is not None
+
+
+def get_username_from_last_name(lastname):
+    """Returns the username is found with friend's last name in the database, False otherwise"""
+    c.execute("SELECT * FROM accounts WHERE last=:last", {"last": lastname})
+    user_entry = c.fetchone()
+    if user_entry:
+        return user_entry[0]
+    else:
+        return False
+
+
+def get_username_from_university(university):
+    """Returns the username is found with friend's university in the database, False otherwise"""
+    c.execute("SELECT * FROM accounts WHERE university=:university", {"last": university})
+    user_entry = c.fetchone()
+    if user_entry:
+        return user_entry[0]
+    else:
+        return False
+
+
+def get_username_from_major(major):
+    """Returns the username is found with friend's major in the database, False otherwise"""
+    c.execute("SELECT * FROM accounts WHERE major=:major", {"major": major})
+    user_entry = c.fetchone()
+    if user_entry:
+        return user_entry[0]
+    else:
+        return False
 
 
 def get_first_name(username):

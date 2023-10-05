@@ -7,7 +7,7 @@ from database_helper import *
 
 # this will make the login attempts be unlimited and make it easier for testing for unlimited attempts right now
 LOGIN_NUM_LIMIT = 1000000000
-USER_NUM_LIMIT = 5
+USER_NUM_LIMIT = 10
 
 
 FEATURES = {
@@ -23,8 +23,10 @@ JOB_OPTIONS = {
 }
 
 FRIEND_OPTIONS = {
-    "a": "Find by first and last name",
-    "b": "Go back",
+    "a": "Find by last name",
+    "b": "Find by university",
+    "c": "Find by major",
+    "d": "Go back",
 }
 
 NAVIGATION_LINKS_GROUP = {
@@ -152,8 +154,10 @@ def signup():
 
     firstname = input("Please insert your first name: ")
     lastname = input("Please insert your last name: ")
+    university = input("Please insert the university you are attending: ")
+    major = input("Please insert your major: ")
 
-    if create_user(username, password, firstname, lastname):
+    if create_user(username, password, firstname, lastname, university, major):
         print("Signup successful!")
         global signed_in
         signed_in = True
@@ -281,9 +285,15 @@ def friend_search(username):
     )
 
     if feature_choice == "a":
-        name_search()
+        last_name_search(username)
         choose_features(username)
-    elif feature_choice == "b":
+    if feature_choice == "b":
+        university_search(username)
+        choose_features(username)
+    if feature_choice == "c":
+        major_search(username)
+        choose_features(username)
+    elif feature_choice == "d":
         if go_back():
             choose_features(username)
 
@@ -305,6 +315,92 @@ def name_search():
         print(
             f"\n{friend_firstname} {friend_lastname} is not yet an existing user on inCollege."
         )
+
+
+def last_name_search(username):
+    """last name search page"""
+    draw_line(message="LAST_NAME_SEARCH")
+
+    friend_lastname = input("Please enter a last name: ")
+
+    friend_username = get_username_from_last_name(friend_lastname)
+
+    if friend_username != False:
+        print(f"\nPrinting usernames of users with the last name {friend_lastname}")
+        print(
+            f"\n{friend_username}"
+        )
+        choice = input("Do you want to request to connect with someone from this list? y/n?: ").lower()
+        if choice == 'y':
+            send_friend_request(username)
+        else:
+            if go_back():
+                choose_features(username)
+    else:
+        print(
+            f"\nThere are no users that have the last name {friend_lastname} on inCollege."
+        )
+
+
+def university_search(username):
+    """university search page"""
+    draw_line(message="UNIVERSITY_SEARCH")
+
+    friend_university = input("Please enter a university: ")
+
+    friend_username = get_username_from_university(friend_university)
+
+    if friend_username != False:
+        print(f"\nPrinting usernames of users attending {friend_university}")
+        print(
+            f"\n{friend_username}"
+        )
+        choice = input("Do you want to request to connect with someone from this list? y/n?: ").lower()
+        if choice == 'y':
+            send_friend_request(username)
+        else:
+            if go_back():
+                choose_features(username)
+    else:
+        print(
+            f"\nThere are no users that attend {friend_university} on inCollege."
+        )
+
+
+def major_search(username):
+    """major search page"""
+    draw_line(message="MAJOR_SEARCH")
+
+    friend_major = input("Please enter a major: ")
+
+    friend_username = get_username_from_major(friend_major)
+
+    if friend_username != False:
+        print(f"\nPrinting usernames of users who are taking this major: {friend_major}")
+        print(
+            f"\n{friend_username}"
+        )
+        choice = input("Do you want to request to connect with someone from this list? y/n?: ").lower()
+        if choice == 'y':
+            send_friend_request(username)
+        else:
+            if go_back():
+                choose_features(username)
+    else:
+        print(
+            f"\nThere are no users that are taking this major: {friend_major} on inCollege."
+        )
+
+
+def send_friend_request(sender_username):
+    """Send a friend request to another user"""
+    friend_username = input("Enter the username of the user you want to connect with: ")
+    add_friend(sender_username, friend_username)
+    if add_friend:
+        print(f"Friend request sent to {friend_username}!")
+    else:
+        print("Invalid input, please try again")
+        send_friend_request(sender_username)
 
 
 def learn_skill(username):
