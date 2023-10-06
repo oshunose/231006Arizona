@@ -77,10 +77,7 @@ SIGNED_IN_GENERAL_LINKS_GROUP = {
     "g": "Go back",
 }
 
-FRIEND_REQUEST = {
-    "a": "Accept",
-    "r": "Reject"
-}
+FRIEND_REQUEST = {"a": "Accept", "r": "Reject"}
 
 GUEST_CONTROLS = {"a": "Email", "b": "SMS", "c": "Target_Advertising"}
 
@@ -98,34 +95,47 @@ email = 0
 SMS = 0
 target_ads = 0
 
+
 def check_friend_request(username):
     """Check if friend request table is filled, if yes ask to accept or deny, if no continue"""
-    friend_request = does_username_have_friend_request(username)
     draw_line(message="Pending Friend Request")
-    if friend_request:
-        print(f"You have a pending friend request from {friend_request}! Would you like to accept or reject?")
-        for key, value in FRIEND_REQUEST.items():
-            print(f"{key}. {value}")
-        friend_request_choice = input(f"Would you like to accept or reject? "
-                                      f"Choose one of {list(FRIEND_REQUEST.keys())}: ").strip().lower()
-        if friend_request_choice == 'a':
-            """Add code to add friend to friend_list in database_helper and delete from friends"""
-            print("Friend Added!")
-        elif friend_request_choice == 'r':
-            delete_friend(friend_request)
-            print("Friend Rejected!")
-    else:
-        print("You have no friend requests!")
+    # friend_request = does_username_have_friend_request(username)
+    friend_request = pending_friend_request_list(username)
+    pending = True
+    while pending:
+        if friend_request:
+            print(f"You have a pending friend request from {friend_request}!")
+            friend_request_choice = (
+                input(
+                    f"Would you like to accept or reject? "
+                    f"Choose one of {list(FRIEND_REQUEST.keys())}: "
+                )
+                .strip()
+                .lower()
+            )
+            if friend_request_choice == "a":
+                """Add code to add friend to friend_list in database_helper and delete from friends"""
+                friend_user = input("Which user would you like to add?")
+                user_exists = does_friend_request_match(username, friend_user)
+                if user_exists:
+                    add_to_friend_list(username, friend_user)
+                    print("Friend Added!")
+                else:
+                    print("User does not exist!")
+            elif friend_request_choice == "r":
+                delete_friend(friend_request)
+                print("Friend Rejected!")
+        else:
+            print("You have no friend requests!")
+            pending = False
 
-    return
 
 def delete_friend(friend_username):
     """Returns True if the friend was successfully deleted, False otherwise"""
     try:
         with conn:
             # Delete the friend with the provided username
-            c.execute(
-                "DELETE FROM friends WHERE friend_user = ?", (friend_username,))
+            c.execute("DELETE FROM friends WHERE friend_user = ?", (friend_username,))
         return True
     except sqlite3.Error as error:
         print("Failed to delete user from the sqlite table:", error)
@@ -140,7 +150,6 @@ def does_username_have_friend_request(username):
         return user_entry[1]
     else:
         return False
-
 
 
 def prompt_person_search():
@@ -376,11 +385,11 @@ def last_name_search(username):
 
     if friend_username != False:
         print(f"\nPrinting usernames of users with the last name {friend_lastname}")
-        print(
-            f"\n{friend_username}"
-        )
-        choice = input("Do you want to request to connect with someone from this list? y/n?: ").lower()
-        if choice == 'y':
+        print(f"\n{friend_username}")
+        choice = input(
+            "Do you want to request to connect with someone from this list? y/n?: "
+        ).lower()
+        if choice == "y":
             send_friend_request(username)
         else:
             if go_back():
@@ -401,19 +410,17 @@ def university_search(username):
 
     if friend_username != False:
         print(f"\nPrinting usernames of users attending {friend_university}")
-        print(
-            f"\n{friend_username}"
-        )
-        choice = input("Do you want to request to connect with someone from this list? y/n?: ").lower()
-        if choice == 'y':
+        print(f"\n{friend_username}")
+        choice = input(
+            "Do you want to request to connect with someone from this list? y/n?: "
+        ).lower()
+        if choice == "y":
             send_friend_request(username)
         else:
             if go_back():
                 choose_features(username)
     else:
-        print(
-            f"\nThere are no users that attend {friend_university} on inCollege."
-        )
+        print(f"\nThere are no users that attend {friend_university} on inCollege.")
 
 
 def major_search(username):
@@ -425,12 +432,14 @@ def major_search(username):
     friend_username = get_username_from_major(friend_major)
 
     if friend_username != False:
-        print(f"\nPrinting usernames of users who are taking this major: {friend_major}")
         print(
-            f"\n{friend_username}"
+            f"\nPrinting usernames of users who are taking this major: {friend_major}"
         )
-        choice = input("Do you want to request to connect with someone from this list? y/n?: ").lower()
-        if choice == 'y':
+        print(f"\n{friend_username}")
+        choice = input(
+            "Do you want to request to connect with someone from this list? y/n?: "
+        ).lower()
+        if choice == "y":
             send_friend_request(username)
         else:
             if go_back():
