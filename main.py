@@ -9,12 +9,13 @@ from database_helper import *
 LOGIN_NUM_LIMIT = 1000000000
 USER_NUM_LIMIT = 10
 
-
 FEATURES = {
     "a": "Search for a job",
     "b": "Find someone you know",
     "c": "Learn a new skill",
     "d": "Go to Navigation Links",
+    "e": "Show My Network",
+    "f": "Check Pending Friend Requests"
 }
 
 JOB_OPTIONS = {
@@ -27,6 +28,11 @@ FRIEND_OPTIONS = {
     "b": "Find by university",
     "c": "Find by major",
     "d": "Go back",
+}
+FRIEND_REQUEST = {
+    "a": "Accept",
+    "r": "Reject",
+    "b": "Go Back",
 }
 
 NAVIGATION_LINKS_GROUP = {
@@ -77,15 +83,12 @@ SIGNED_IN_GENERAL_LINKS_GROUP = {
     "g": "Go back",
 }
 
-FRIEND_REQUEST = {"a": "Accept", "r": "Reject"}
-
 GUEST_CONTROLS = {"a": "Email", "b": "SMS", "c": "Target_Advertising"}
 
 TURN_ON_OFF = {"a": "Turn On", "b": "Turn Off"}
 
 SKILLS = ["Python", "Java", "C++", "JavaScript", "SQL"]
 LANGUAGES = {"a": "English", "b": "Spanish"}
-
 
 limit_login = False
 login_attempts = 0
@@ -94,62 +97,6 @@ language = ""
 email = 0
 SMS = 0
 target_ads = 0
-
-
-def check_friend_request(username):
-    """Check if friend request table is filled, if yes ask to accept or deny, if no continue"""
-    draw_line(message="Pending Friend Request")
-    # friend_request = does_username_have_friend_request(username)
-    friend_request = pending_friend_request_list(username)
-    pending = True
-    while pending:
-        if friend_request:
-            print(f"You have a pending friend request from {friend_request}!")
-            friend_request_choice = (
-                input(
-                    f"Would you like to accept or reject? "
-                    f"Choose one of {list(FRIEND_REQUEST.keys())}: "
-                )
-                .strip()
-                .lower()
-            )
-            if friend_request_choice == "a":
-                """Add code to add friend to friend_list in database_helper and delete from friends"""
-                friend_user = input("Which user would you like to add?")
-                user_exists = does_friend_request_match(username, friend_user)
-                if user_exists:
-                    add_to_friend_list(username, friend_user)
-                    print("Friend Added!")
-                else:
-                    print("User does not exist!")
-            elif friend_request_choice == "r":
-                delete_friend(friend_request)
-                print("Friend Rejected!")
-        else:
-            print("You have no friend requests!")
-            pending = False
-
-
-def delete_friend(friend_username):
-    """Returns True if the friend was successfully deleted, False otherwise"""
-    try:
-        with conn:
-            # Delete the friend with the provided username
-            c.execute("DELETE FROM friends WHERE friend_user = ?", (friend_username,))
-        return True
-    except sqlite3.Error as error:
-        print("Failed to delete user from the sqlite table:", error)
-        return False
-
-
-def does_username_have_friend_request(username):
-    """Returns friend username if the username already exists in the friends, False otherwise"""
-    c.execute("SELECT * FROM friends WHERE user=:user", {"user": username})
-    user_entry = c.fetchone()
-    if user_entry:
-        return user_entry[1]
-    else:
-        return False
 
 
 def prompt_person_search():
@@ -248,10 +195,10 @@ def reached_user_limit(num_users):
 def validate_password(input_p):
     """Check if password meets requirements"""
     if not (
-        8 <= len(input_p) <= 12
-        and any(char.isupper() for char in input_p)
-        and any(char.isdigit() for char in input_p)
-        and any(char in string.punctuation for char in input_p)
+            8 <= len(input_p) <= 12
+            and any(char.isupper() for char in input_p)
+            and any(char.isdigit() for char in input_p)
+            and any(char in string.punctuation for char in input_p)
     ):
         print("Password does not meet requirements, please try again")
         return None
@@ -284,6 +231,10 @@ def feature_direct(feature_choice, username):
         learn_skill(username)
     elif feature_choice == "d":
         choose_navigation_link()
+    elif feature_choice == "e":
+        show_network(username)
+    elif feature_choice == "f":
+        check_friend_request(username)
 
 
 def job_search(username):
@@ -385,11 +336,11 @@ def last_name_search(username):
 
     if friend_username != False:
         print(f"\nPrinting usernames of users with the last name {friend_lastname}")
-        print(f"\n{friend_username}")
-        choice = input(
-            "Do you want to request to connect with someone from this list? y/n?: "
-        ).lower()
-        if choice == "y":
+        print(
+            f"\n{friend_username}"
+        )
+        choice = input("Do you want to request to connect with someone from this list? y/n?: ").lower()
+        if choice == 'y':
             send_friend_request(username)
         else:
             if go_back():
@@ -410,17 +361,19 @@ def university_search(username):
 
     if friend_username != False:
         print(f"\nPrinting usernames of users attending {friend_university}")
-        print(f"\n{friend_username}")
-        choice = input(
-            "Do you want to request to connect with someone from this list? y/n?: "
-        ).lower()
-        if choice == "y":
+        print(
+            f"\n{friend_username}"
+        )
+        choice = input("Do you want to request to connect with someone from this list? y/n?: ").lower()
+        if choice == 'y':
             send_friend_request(username)
         else:
             if go_back():
                 choose_features(username)
     else:
-        print(f"\nThere are no users that attend {friend_university} on inCollege.")
+        print(
+            f"\nThere are no users that attend {friend_university} on inCollege."
+        )
 
 
 def major_search(username):
@@ -432,14 +385,12 @@ def major_search(username):
     friend_username = get_username_from_major(friend_major)
 
     if friend_username != False:
+        print(f"\nPrinting usernames of users who are taking this major: {friend_major}")
         print(
-            f"\nPrinting usernames of users who are taking this major: {friend_major}"
+            f"\n{friend_username}"
         )
-        print(f"\n{friend_username}")
-        choice = input(
-            "Do you want to request to connect with someone from this list? y/n?: "
-        ).lower()
-        if choice == "y":
+        choice = input("Do you want to request to connect with someone from this list? y/n?: ").lower()
+        if choice == 'y':
             send_friend_request(username)
         else:
             if go_back():
@@ -749,6 +700,93 @@ def languages():
     print(f"Congratulations, the app language has been changed to {language}")
     if go_back():
         choose_incollege_important_links()
+
+
+def check_friend_request(username):
+    """Check if friend request table is filled, if yes ask to accept or reject, if no continue"""
+    draw_line(message="Pending Friend Requests")
+    friend_request = pending_friend_request_list(username)
+    if friend_request is False:
+        print("You have no friend requests!")
+        choose_features(username)
+    else:
+        print("You have a pending friend request from:")
+        for i, name in enumerate(friend_request):
+            print(f"{name[0]}")
+
+        print("\nWhat would you like to do with these requests?")
+        for key, value in FRIEND_REQUEST.items():
+            print(f"{key}. {value}")
+        friend_request_choice = input(f"Choose one of {list(FRIEND_REQUEST.keys())}: ").strip().lower()
+
+        if friend_request_choice == 'a':
+            accept_friend_request(username)
+            choose_features(username)
+        if friend_request_choice == 'r':
+            reject_friend_request(username)
+            choose_features(username)
+        elif friend_request_choice == "b":
+            if go_back():
+                choose_features(username)
+        else:
+            print("Character not identified. Please try again")
+            return check_friend_request(username)
+
+
+def accept_friend_request(username):
+    friend_user = input("Which user would you like to add?")
+    user_exists = does_friend_request_match(username, friend_user)
+    if user_exists:
+        add_to_friend_list(username, friend_user)
+        delete_friend_request(username, friend_user)
+        print("Friend Added!")
+    else:
+        print("Username does not exist in friend requests. Try again!")
+        accept_friend_request(username)
+
+
+def reject_friend_request(username):
+    friend_user = input("Which user would you like to reject?")
+    user_exists = does_friend_request_match(username, friend_user)
+    if user_exists:
+        delete_friend_request(username, friend_user)
+        print("Friend Rejected!\n")
+    else:
+        print("Username does not exist in friend requests. Try again!\n")
+        reject_friend_request(username)
+
+
+def show_network(username):
+    draw_line(message="Friend List")
+    friend_list = list_of_friends(username)
+    if friend_list is False:
+        print("You have no friends!")
+        choose_features(username)
+    else:
+        print("Here's a list of your friends:")
+        for i, name in enumerate(friend_list):
+            print(f"{name[1]}")
+        choice = input("Would you like to disconnect from one of these friends? (y/n):")
+        if choice == "y":
+            delete_friend(username)
+            choose_features(username)
+        elif choice == "n":
+            if go_back():
+                choose_features(username)
+        else:
+            print("Character not identified. Please try again")
+            return show_network(username)
+
+
+def delete_friend(username):
+    friend_user = input("Which user would you like to delete?")
+    user_exists = does_friend_match(username, friend_user)
+    if user_exists:
+        delete_friend_from_list(username, friend_user)
+        print("Friend Deleted!\n")
+    else:
+        print("Username does not exist in friend requests. Try again!\n")
+        delete_friend(username)
 
 
 def about_important():
